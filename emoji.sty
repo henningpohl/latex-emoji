@@ -1,6 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{emoji}
 \RequirePackage{graphicx}
+\RequirePackage{ifxetex}
 
 \newcommand{\@emojifolder}{ios}
 \DeclareOption{ios}{
@@ -57,6 +58,8 @@
 
 \newcommand{\emoji}[2][\@emojifolder]{\includegraphics[height=1em]{#1/#2.png}}
 
+\ifxetex
+\else
 \DeclareUnicodeCharacter{1F600}{\includegraphics[height=1em]{\@emojifolder/1F600.png}}
 \DeclareUnicodeCharacter{1F601}{\includegraphics[height=1em]{\@emojifolder/1F601.png}}
 \DeclareUnicodeCharacter{1F602}{\includegraphics[height=1em]{\@emojifolder/1F602.png}}
@@ -1069,5 +1072,6 @@
 \DeclareUnicodeCharacter{26AB}{\includegraphics[height=1em]{\@emojifolder/26AB.png}}
 \DeclareUnicodeCharacter{1F534}{\includegraphics[height=1em]{\@emojifolder/1F534.png}}
 \DeclareUnicodeCharacter{1F535}{\includegraphics[height=1em]{\@emojifolder/1F535.png}}
+\fi
 
 \endinput

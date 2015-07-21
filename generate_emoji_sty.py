@@ -47,6 +47,7 @@ def save_image(folder, imgSrc, filename):
 preamble = r"""\NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{emoji}
 \RequirePackage{graphicx}
+\RequirePackage{ifxetex}
 
 \newcommand{\@emojifolder}{ios}
 \DeclareOption{ios}{
@@ -114,6 +115,8 @@ def scrape():
 
     with open('emoji.sty', 'w') as out:
         out.write(preamble)
+
+        out.write("\\ifxetex\n\\else\n")
         for row in header.find_next_siblings('tr'):
             fields = {k:c for k, c in zip(keys, row.find_all('td')) }
             codes = fields['code'].text.replace('U+', '').split(' ')
@@ -132,6 +135,7 @@ def scrape():
             img = r"\includegraphics[height=1em]{\@emojifolder/%s}" % filename
             out.write("\\DeclareUnicodeCharacter{%s}{%s}\n" % (code, img))
 
+        out.write("\\fi\n")
         out.write("\n\\endinput")
 
 if __name__ == '__main__':
