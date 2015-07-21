@@ -124,3 +124,4 @@ sympy-plots-for-*.tex/
 # WinEdt
 *.bak
 *.sav
+/scrape_cache.sqlite
