@@ -47,25 +47,34 @@ def save_image(folder, imgSrc, filename):
 preamble = r"""\NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{emoji}
 \RequirePackage{graphicx}
+\RequirePackage{kvoptions}
+\RequirePackage{ifthen}
 \RequirePackage{ifxetex}
 
+\SetupKeyvalOptions{family=emoji, prefix=emoji@}
+
 \newcommand{\@emojifolder}{ios}
-\DeclareOption{ios}{
+\DeclareVoidOption{ios}{
     \renewcommand{\@emojifolder}{ios}
 }
-\DeclareOption{android}{
+\DeclareVoidOption{android}{
     \renewcommand{\@emojifolder}{android}
 }
-\DeclareOption{twitter}{
+\DeclareVoidOption{twitter}{
     \renewcommand{\@emojifolder}{twitter}
 }
-\DeclareOption{windows}{
+\DeclareVoidOption{windows}{
     \renewcommand{\@emojifolder}{windows}
 }
-\DeclareOption{bw}{
+\DeclareVoidOption{bw}{
     \renewcommand{\@emojifolder}{bw}
 }
-\ProcessOptions\relax
+\DeclareVoidOption{text}{
+    \renewcommand{\@emojifolder}{text}
+}
+\DeclareStringOption{font}
+
+\ProcessKeyvalOptions*
 
 \newenvironment{ios-emojis}{%
   \let\@oldemojifolder\@emojifolder%
@@ -102,7 +111,26 @@ preamble = r"""\NeedsTeXFormat{LaTeX2e}
   \renewcommand{\@emojifolder}{\@oldemojifolder}%
 }
 
-\newcommand{\emoji}[2][\@emojifolder]{\includegraphics[height=1em]{#1/#2.png}}
+\newenvironment{text-emojis}{%
+  \let\@oldemojifolder\@emojifolder%
+  \renewcommand{\@emojifolder}{text}%
+}{%
+  \renewcommand{\@emojifolder}{\@oldemojifolder}%
+}
+
+\newcommand{\emoji}[2][\@emojifolder]{%
+  \ifthenelse{\equal{#1}{text}}{%
+	\ifxetex%
+	  \ifx\emoji@font\@empty%
+	  \else%
+	    {\fontspec{\emoji@font}\char"#2}%
+	  \fi%
+	\else%
+	\fi%
+  }{%
+    \includegraphics[height=1em]{#1/#2.png}%
+  }%
+}
 
 """
 

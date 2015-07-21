@@ -1,13 +1,22 @@
 \documentclass{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
+\usepackage{ifxetex}
+
+\ifxetex
+  \usepackage[ios,font=seguiemj.ttf]{emoji}
+  \usepackage{fontspec}
+  \newcommand{\dogline}{The \emoji{23E9} brown \emoji{1F43A} jumps over the lazy \emoji{1F436}.}
+\else
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage[ios]{emoji}
+  \newcommand{\dogline}{The ⏩ brown 🐺 jumps over the lazy 🐶.}
+\fi
+
 \usepackage{times}
-
 \usepackage{graphicx}
-\usepackage[ios]{emoji}
 
-\newcommand{\dogline}{The ⏩ brown 🐺 jumps over the lazy 🐶.}
+
 
 \title{Using emoji inside \LaTeX}
 
@@ -25,11 +34,16 @@ You can include any available emoji with the \verb|\emoji| command. For example,
 \end{description}
 To select multi-char emoji, pass both codes joined by a dash to the command. For example, \verb|\emoji{1F1E8-1F1F3}| gives \emoji{1F1E8-1F1F3}.
 
-For single character emoji, you can also type that character directly (encode your document in UTF-8) and the emoji will be displayed instead. For example, the line ``\dogline'' does not contain the \verb|emoji| command. 
+For single character emoji, you can also type that character directly (encode your document in UTF-8) and the emoji will be displayed instead. For example, the line ``\dogline'' does not contain the \verb|emoji| command. Note that this is disabled when using XeTeX. 
 
 During import of the package, you can pick the default emoji set by passing an optional argument as for the \verb|emoji| command. If you want to switch emoji sets for more than one emoji, you can use the \verb|android-emojis|, \verb|ios-emojis|, \verb|bw-emojis|, \verb|windows-emojis|, \verb|twitter-emojis| environments to temporarily change the default. For example, all following emojis are set in twitter style:
 \begin{twitter-emojis}
 \dogline
 \end{twitter-emojis}
+
+When using XeTeX, you can also specify a \verb|text| option to set the emoji in a given font. The font to use is passed to the package during loading. On Windows, for example, you might want to use \textit{Segeo UI Emoji}. That font would be selected by using: \verb|usepackage[font=seguiemj.ttf]{emoji}|. Emojis rendered via a font are, e.g.: 
+\begin{text-emojis}
+\dogline
+\end{text-emojis}
 
 \end{document}
