@@ -1,3 +1,25 @@
+Emoji images scraped from http://www.unicode.org/emoji/charts/full-emoji-list.html
+
+Images in ios directory:
+Copyright (c) 2013 Apple Inc. All rights reserved. 
+
+Images in android directory:
+Copyright (c) 2008 The Android Open Source Project. Licensed under the Apache License. 
+See http://source.android.com/source/licenses.html
+
+Images in windows directory:
+Copyright (c) 2008 Microsoft Corporation. All rights reserved.
+See http://www.microsoft.com/typography/fonts/font.aspx?FMID=1798
+
+Images in bw directory:
+Copyright unknown.
+
+Images in twitter directory:
+Copyright (c) 2014 Twitter, Inc and other contributors. Licensed under CC-BY 4.0.
+See http://twitter.github.io/twemoji/
+ 
+Source code: 
+
 The MIT License (MIT)
 
 Copyright (c) 2015 Henning Pohl
