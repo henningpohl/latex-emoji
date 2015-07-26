@@ -1,0 +1,133 @@
+﻿\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{emoji}
+\RequirePackage{graphicx}
+\RequirePackage{kvoptions}
+\RequirePackage{etoolbox}
+\RequirePackage{xcolor}
+\RequirePackage{ifthen}
+\RequirePackage{ifxetex}
+\RequirePackage{ifluatex}
+
+\SetupKeyvalOptions{family=emoji, prefix=emoji@}
+
+\newcommand{\@emojifolder}{ios}
+\DeclareVoidOption{ios}{
+    \renewcommand{\@emojifolder}{ios}
+}
+\DeclareVoidOption{android}{
+    \renewcommand{\@emojifolder}{android}
+}
+\DeclareVoidOption{twitter}{
+    \renewcommand{\@emojifolder}{twitter}
+}
+\DeclareVoidOption{windows}{
+    \renewcommand{\@emojifolder}{windows}
+}
+\DeclareVoidOption{bw}{
+    \renewcommand{\@emojifolder}{bw}
+}
+\DeclareVoidOption{text}{
+    \renewcommand{\@emojifolder}{text}
+}
+\DeclareStringOption{font}
+
+\ProcessKeyvalOptions*
+
+\newenvironment{ios-emojis}{%
+  \let\@oldemojifolder\@emojifolder%
+  \renewcommand{\@emojifolder}{ios}%
+}{%
+  \renewcommand{\@emojifolder}{\@oldemojifolder}%
+}
+
+\newenvironment{android-emojis}{%
+  \let\@oldemojifolder\@emojifolder%
+  \renewcommand{\@emojifolder}{android}%
+}{%
+  \renewcommand{\@emojifolder}{\@oldemojifolder}%
+}
+
+\newenvironment{twitter-emojis}{%
+  \let\@oldemojifolder\@emojifolder%
+  \renewcommand{\@emojifolder}{twitter}%
+}{%
+  \renewcommand{\@emojifolder}{\@oldemojifolder}%
+}
+
+\newenvironment{windows-emojis}{%
+  \let\@oldemojifolder\@emojifolder%
+  \renewcommand{\@emojifolder}{windows}%
+}{%
+  \renewcommand{\@emojifolder}{\@oldemojifolder}%
+}
+
+\newenvironment{bw-emojis}{%
+  \let\@oldemojifolder\@emojifolder%
+  \renewcommand{\@emojifolder}{bw}%
+}{%
+  \renewcommand{\@emojifolder}{\@oldemojifolder}%
+}
+
+\newenvironment{text-emojis}{%
+  \let\@oldemojifolder\@emojifolder%
+  \renewcommand{\@emojifolder}{text}%
+}{%
+  \renewcommand{\@emojifolder}{\@oldemojifolder}%
+}
+
+
+\DeclareListParser*{\emojilist}{-}
+\newcommand{\@itemToChar}[1]{\char"#1\relax}
+
+\newcommand{\@emojitext}[1]{%
+  \ifx\emoji@font\@empty%
+    \emojilist{\@itemToChar}{#1}
+  \else%
+    {\fontspec{\emoji@font}\emojilist{\@itemToChar}{#1}}%
+  \fi%
+}
+
+\newcommand{\@emojiimg}[2]{%
+  \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+}
+
+\newcommand{\@emojiimgtext}[2]{%
+  \ifx\emoji@font\@empty%
+    \rlap{\emojilist{\@itemToChar}{#2}}%
+  \else%
+    \rlap{\fontspec[Opacity=0]{\emoji@font}\emojilist{\@itemToChar}{#2}}%
+  \fi%
+  \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+}
+
+\newcommand{\emoji}[2][\@emojifolder]{%
+  \leavevmode%
+  \ifthenelse{\equal{#1}{text}}{%
+    \ifxetex%
+	  \@emojitext{#2}%
+	\else%
+	  \ifluatex%
+        \@emojitext{#2}%
+      \else%
+        \textbf{not available in pdftex}%
+      \fi%		
+  }{%
+    \ifxetex%
+	  \@emojiimg{#1}{#2}%
+	\else%
+	  \ifluatex%
+	    \@emojiimgtext{#1}{#2}%
+	  \else%
+	    \@emojiimg{#1}{#2}%
+	  \fi%
+	\fi%
+  }%
+}
+
+\ifxetex\else\ifluatex\else
+% for e in emojis:
+\DeclareUnicodeCharacter{${e}}{\includegraphics[height=1em]{\@emojifolder/${e}.png}}
+% endfor
+\fi\fi
+
+\endinput

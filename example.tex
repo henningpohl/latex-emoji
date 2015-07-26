@@ -1,22 +1,27 @@
 \documentclass{article}
 
 \usepackage{ifxetex}
+\usepackage{ifluatex}
 
 \ifxetex
   \usepackage[ios,font=seguiemj.ttf]{emoji}
   \usepackage{fontspec}
   \newcommand{\dogline}{The \emoji{23E9} brown \emoji{1F43A} jumps over the lazy \emoji{1F436}.}
 \else
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
-  \usepackage[ios]{emoji}
-  \newcommand{\dogline}{The ⏩ brown 🐺 jumps over the lazy 🐶.}
+  \ifluatex
+    \usepackage[ios,font=Symbola_hint.ttf]{emoji}
+    \usepackage{fontspec}
+    \newcommand{\dogline}{The \emoji{23E9} brown \emoji{1F43A} jumps over the lazy \emoji{1F436}.}
+  \else
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage[ios]{emoji}
+    \newcommand{\dogline}{The ⏩ brown 🐺 jumps over the lazy 🐶.}
+  \fi
 \fi
 
 \usepackage{times}
 \usepackage{graphicx}
-
-
 
 \title{Using emoji inside \LaTeX}
 
@@ -41,9 +46,9 @@ During import of the package, you can pick the default emoji set by passing an o
 \dogline
 \end{twitter-emojis}
 
-When using XeTeX, you can also specify a \verb|text| option to set the emoji in a given font. The font to use is passed to the package during loading. On Windows, for example, you might want to use \textit{Segeo UI Emoji}. That font would be selected by using: \verb|usepackage[font=seguiemj.ttf]{emoji}|. Emojis rendered via a font are, e.g.: 
+When using XeTeX, you can also specify a \verb|text| option to set the emoji in a given font. The font to use is passed to the package during loading. On Windows, for example, you might want to use \textit{Segeo UI Emoji} or \textit{Symbola}. That font would be selected by using: \verb|usepackage[font=seguiemj.ttf]{emoji}| or \verb|usepackage[font=Symbola_hint.ttf]{emoji}|. Emojis rendered via a font are, e.g.: 
 \begin{text-emojis}
-\dogline
+\emoji{23E9} \emoji{1F43A} \emoji{1F436}
 \end{text-emojis}
 
 \end{document}

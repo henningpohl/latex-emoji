@@ -2,8 +2,11 @@
 \ProvidesPackage{emoji}
 \RequirePackage{graphicx}
 \RequirePackage{kvoptions}
+\RequirePackage{etoolbox}
+\RequirePackage{xcolor}
 \RequirePackage{ifthen}
 \RequirePackage{ifxetex}
+\RequirePackage{ifluatex}
 
 \SetupKeyvalOptions{family=emoji, prefix=emoji@}
 
@@ -72,22 +75,49 @@
   \renewcommand{\@emojifolder}{\@oldemojifolder}%
 }
 
+
+\DeclareListParser*{\emojilist}{-}
+\newcommand{\@itemToChar}[1]{\char"#1\relax}
+
+\newcommand{\@emojitext}[1]{%
+  \ifx\emoji@font\@empty%
+    \emojilist{\@itemToChar}{#1}
+  \else%
+    {\fontspec{\emoji@font}\emojilist{\@itemToChar}{#1}}%
+  \fi%
+}
+
+\newcommand{\@emojiimg}[2]{%
+  \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+}
+
+\newcommand{\@emojiimgtext}[2]{%
+  \ifx\emoji@font\@empty%
+    \rlap{\emojilist{\@itemToChar}{#2}}%
+  \else%
+    \rlap{\fontspec[Opacity=0]{\emoji@font}\emojilist{\@itemToChar}{#2}}%
+  \fi%
+  \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+}
+
 \newcommand{\emoji}[2][\@emojifolder]{%
-  \ifthenelse{\equal{#1}{text}}{%
-	\ifxetex%
-	  \ifx\emoji@font\@empty%
-	  \else%
-	    {\fontspec{\emoji@font}\char"#2}%
-	  \fi%
-	\else%
-	\fi%
+  \leavevmode%
+  \ifthenelse{\equal{#1}{text}}{%    \ifxetex%
+	  \@emojitext{#2}%	\else%	  \ifluatex%        \@emojitext{#2}%      \else%        \textbf{not available in pdftex}%      \fi%		
   }{%
-    \includegraphics[height=1em]{#1/#2.png}%
+    \ifxetex%
+	  \@emojiimg{#1}{#2}%
+	\else%
+	  \ifluatex%
+	    \@emojiimgtext{#1}{#2}%
+	  \else%
+	    \@emojiimg{#1}{#2}%
+	  \fi%
+	\fi%
   }%
 }
 
-\ifxetex
-\else
+\ifxetex\else\ifluatex\else
 \DeclareUnicodeCharacter{1F600}{\includegraphics[height=1em]{\@emojifolder/1F600.png}}
 \DeclareUnicodeCharacter{1F601}{\includegraphics[height=1em]{\@emojifolder/1F601.png}}
 \DeclareUnicodeCharacter{1F602}{\includegraphics[height=1em]{\@emojifolder/1F602.png}}
@@ -1100,6 +1130,6 @@
 \DeclareUnicodeCharacter{26AB}{\includegraphics[height=1em]{\@emojifolder/26AB.png}}
 \DeclareUnicodeCharacter{1F534}{\includegraphics[height=1em]{\@emojifolder/1F534.png}}
 \DeclareUnicodeCharacter{1F535}{\includegraphics[height=1em]{\@emojifolder/1F535.png}}
-\fi
+\fi\fi
 
 \endinput
