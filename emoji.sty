@@ -4,9 +4,11 @@
 \RequirePackage{kvoptions}
 \RequirePackage{etoolbox}
 \RequirePackage{xcolor}
+\RequirePackage{xstring}
 \RequirePackage{ifthen}
 \RequirePackage{ifxetex}
 \RequirePackage{ifluatex}
+\RequirePackage{accsupp}
 
 \SetupKeyvalOptions{family=emoji, prefix=emoji@}
 
@@ -92,28 +94,70 @@
 }
 
 \newcommand{\@emojiimgtext}[2]{%
-  \ifx\emoji@font\@empty%
-    \rlap{\emojilist{\@itemToChar}{#2}}%
+   % This is an ugly hack and fails for emoji with more than five hyphens
+   % Should be list processing, but that failed somehow
+  \StrCut{#2}{-}{\a}{\b}%
+  \StrCut{\b}{-}{\b}{\c}%
+  \StrCut{\c}{-}{\c}{\d}%
+  \StrCut{\d}{-}{\d}{\e}%
+  \StrCut{\e}{-}{\e}{\f}%
+  %
+  \ifx\b\empty%
+    \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a},unicode,space}%
+      \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+    \EndAccSupp{}%
   \else%
-    \rlap{\fontspec[Opacity=0]{\emoji@font}\emojilist{\@itemToChar}{#2}}%
+    \ifx\c\empty%
+      \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a}\unichar{"\b},unicode,space}%
+        \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+      \EndAccSupp{}%
+    \else%
+      \ifx\d\empty%
+        \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a}\unichar{"\b}\unichar{"\c},unicode,space}%
+          \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+        \EndAccSupp{}%
+      \else%
+        \ifx\e\empty%
+          \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a}\unichar{"\b}\unichar{"\c}\unichar{"\d},unicode,space}%
+            \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+          \EndAccSupp{}%
+        \else%
+          \ifx\f\empty%
+            \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a}\unichar{"\b}\unichar{"\c}\unichar{"\d}\unichar{"\e},unicode,space}%
+              \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+            \EndAccSupp{}%
+          \else%
+            \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a}\unichar{"\b}\unichar{"\c}\unichar{"\d}\unichar{"\e}\unichar{"\f},unicode,space}%
+              \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+            \EndAccSupp{}%
+          \fi%
+        \fi%
+      \fi%
+    \fi%
   \fi%
-  \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
 }
 
 \newcommand{\emoji}[2][\@emojifolder]{%
   \leavevmode%
-  \ifthenelse{\equal{#1}{text}}{%    \ifxetex%
-	  \@emojitext{#2}%	\else%	  \ifluatex%        \@emojitext{#2}%      \else%        \textbf{not available in pdftex}%      \fi%		
+  \ifthenelse{\equal{#1}{text}}{%
+    \ifxetex%
+      \@emojitext{#2}%
+    \else%
+      \ifluatex%
+        \@emojitext{#2}%
+      \else%
+        \textbf{not available in pdftex}%
+      \fi%
   }{%
     \ifxetex%
-	  \@emojiimg{#1}{#2}%
-	\else%
-	  \ifluatex%
-	    \@emojiimgtext{#1}{#2}%
-	  \else%
-	    \@emojiimg{#1}{#2}%
-	  \fi%
-	\fi%
+      \@emojiimg{#1}{#2}%
+    \else%
+      \ifluatex%
+        \@emojiimgtext{#1}{#2}%
+      \else%
+        \@emojiimg{#1}{#2}%
+      \fi%
+    \fi%
   }%
 }
 
@@ -186,8 +230,29 @@
 \DeclareUnicodeCharacter{1F635}{\includegraphics[height=1em]{\@emojifolder/1F635.png}}
 \DeclareUnicodeCharacter{1F621}{\includegraphics[height=1em]{\@emojifolder/1F621.png}}
 \DeclareUnicodeCharacter{1F620}{\includegraphics[height=1em]{\@emojifolder/1F620.png}}
-\DeclareUnicodeCharacter{1F47F}{\includegraphics[height=1em]{\@emojifolder/1F47F.png}}
 \DeclareUnicodeCharacter{1F608}{\includegraphics[height=1em]{\@emojifolder/1F608.png}}
+\DeclareUnicodeCharacter{1F47F}{\includegraphics[height=1em]{\@emojifolder/1F47F.png}}
+\DeclareUnicodeCharacter{1F479}{\includegraphics[height=1em]{\@emojifolder/1F479.png}}
+\DeclareUnicodeCharacter{1F47A}{\includegraphics[height=1em]{\@emojifolder/1F47A.png}}
+\DeclareUnicodeCharacter{1F480}{\includegraphics[height=1em]{\@emojifolder/1F480.png}}
+\DeclareUnicodeCharacter{2620}{\includegraphics[height=1em]{\@emojifolder/2620.png}}
+\DeclareUnicodeCharacter{1F47B}{\includegraphics[height=1em]{\@emojifolder/1F47B.png}}
+\DeclareUnicodeCharacter{1F47D}{\includegraphics[height=1em]{\@emojifolder/1F47D.png}}
+\DeclareUnicodeCharacter{1F47E}{\includegraphics[height=1em]{\@emojifolder/1F47E.png}}
+\DeclareUnicodeCharacter{1F916}{\includegraphics[height=1em]{\@emojifolder/1F916.png}}
+\DeclareUnicodeCharacter{1F4A9}{\includegraphics[height=1em]{\@emojifolder/1F4A9.png}}
+\DeclareUnicodeCharacter{1F63A}{\includegraphics[height=1em]{\@emojifolder/1F63A.png}}
+\DeclareUnicodeCharacter{1F638}{\includegraphics[height=1em]{\@emojifolder/1F638.png}}
+\DeclareUnicodeCharacter{1F639}{\includegraphics[height=1em]{\@emojifolder/1F639.png}}
+\DeclareUnicodeCharacter{1F63B}{\includegraphics[height=1em]{\@emojifolder/1F63B.png}}
+\DeclareUnicodeCharacter{1F63C}{\includegraphics[height=1em]{\@emojifolder/1F63C.png}}
+\DeclareUnicodeCharacter{1F63D}{\includegraphics[height=1em]{\@emojifolder/1F63D.png}}
+\DeclareUnicodeCharacter{1F640}{\includegraphics[height=1em]{\@emojifolder/1F640.png}}
+\DeclareUnicodeCharacter{1F63F}{\includegraphics[height=1em]{\@emojifolder/1F63F.png}}
+\DeclareUnicodeCharacter{1F63E}{\includegraphics[height=1em]{\@emojifolder/1F63E.png}}
+\DeclareUnicodeCharacter{1F648}{\includegraphics[height=1em]{\@emojifolder/1F648.png}}
+\DeclareUnicodeCharacter{1F649}{\includegraphics[height=1em]{\@emojifolder/1F649.png}}
+\DeclareUnicodeCharacter{1F64A}{\includegraphics[height=1em]{\@emojifolder/1F64A.png}}
 \DeclareUnicodeCharacter{1F466}{\includegraphics[height=1em]{\@emojifolder/1F466.png}}
 \DeclareUnicodeCharacter{1F467}{\includegraphics[height=1em]{\@emojifolder/1F467.png}}
 \DeclareUnicodeCharacter{1F468}{\includegraphics[height=1em]{\@emojifolder/1F468.png}}
@@ -203,9 +268,9 @@
 \DeclareUnicodeCharacter{26D1}{\includegraphics[height=1em]{\@emojifolder/26D1.png}}
 \DeclareUnicodeCharacter{1F478}{\includegraphics[height=1em]{\@emojifolder/1F478.png}}
 \DeclareUnicodeCharacter{1F482}{\includegraphics[height=1em]{\@emojifolder/1F482.png}}
+\DeclareUnicodeCharacter{1F575}{\includegraphics[height=1em]{\@emojifolder/1F575.png}}
 \DeclareUnicodeCharacter{1F385}{\includegraphics[height=1em]{\@emojifolder/1F385.png}}
 \DeclareUnicodeCharacter{1F47C}{\includegraphics[height=1em]{\@emojifolder/1F47C.png}}
-\DeclareUnicodeCharacter{1F575}{\includegraphics[height=1em]{\@emojifolder/1F575.png}}
 \DeclareUnicodeCharacter{1F46F}{\includegraphics[height=1em]{\@emojifolder/1F46F.png}}
 \DeclareUnicodeCharacter{1F486}{\includegraphics[height=1em]{\@emojifolder/1F486.png}}
 \DeclareUnicodeCharacter{1F487}{\includegraphics[height=1em]{\@emojifolder/1F487.png}}
@@ -259,11 +324,11 @@
 \DeclareUnicodeCharacter{1F450}{\includegraphics[height=1em]{\@emojifolder/1F450.png}}
 \DeclareUnicodeCharacter{270D}{\includegraphics[height=1em]{\@emojifolder/270D.png}}
 \DeclareUnicodeCharacter{1F485}{\includegraphics[height=1em]{\@emojifolder/1F485.png}}
+\DeclareUnicodeCharacter{1F442}{\includegraphics[height=1em]{\@emojifolder/1F442.png}}
+\DeclareUnicodeCharacter{1F443}{\includegraphics[height=1em]{\@emojifolder/1F443.png}}
 \DeclareUnicodeCharacter{1F463}{\includegraphics[height=1em]{\@emojifolder/1F463.png}}
 \DeclareUnicodeCharacter{1F440}{\includegraphics[height=1em]{\@emojifolder/1F440.png}}
 \DeclareUnicodeCharacter{1F441}{\includegraphics[height=1em]{\@emojifolder/1F441.png}}
-\DeclareUnicodeCharacter{1F442}{\includegraphics[height=1em]{\@emojifolder/1F442.png}}
-\DeclareUnicodeCharacter{1F443}{\includegraphics[height=1em]{\@emojifolder/1F443.png}}
 \DeclareUnicodeCharacter{1F445}{\includegraphics[height=1em]{\@emojifolder/1F445.png}}
 \DeclareUnicodeCharacter{1F444}{\includegraphics[height=1em]{\@emojifolder/1F444.png}}
 \DeclareUnicodeCharacter{1F48B}{\includegraphics[height=1em]{\@emojifolder/1F48B.png}}
@@ -283,7 +348,6 @@
 \DeclareUnicodeCharacter{1F49F}{\includegraphics[height=1em]{\@emojifolder/1F49F.png}}
 \DeclareUnicodeCharacter{2763}{\includegraphics[height=1em]{\@emojifolder/2763.png}}
 \DeclareUnicodeCharacter{1F48C}{\includegraphics[height=1em]{\@emojifolder/1F48C.png}}
-\DeclareUnicodeCharacter{1F4A7}{\includegraphics[height=1em]{\@emojifolder/1F4A7.png}}
 \DeclareUnicodeCharacter{1F4A4}{\includegraphics[height=1em]{\@emojifolder/1F4A4.png}}
 \DeclareUnicodeCharacter{1F4A2}{\includegraphics[height=1em]{\@emojifolder/1F4A2.png}}
 \DeclareUnicodeCharacter{1F4A3}{\includegraphics[height=1em]{\@emojifolder/1F4A3.png}}
@@ -292,9 +356,10 @@
 \DeclareUnicodeCharacter{1F4A8}{\includegraphics[height=1em]{\@emojifolder/1F4A8.png}}
 \DeclareUnicodeCharacter{1F4AB}{\includegraphics[height=1em]{\@emojifolder/1F4AB.png}}
 \DeclareUnicodeCharacter{1F4AC}{\includegraphics[height=1em]{\@emojifolder/1F4AC.png}}
+\DeclareUnicodeCharacter{1F5E8}{\includegraphics[height=1em]{\@emojifolder/1F5E8.png}}
+\DeclareUnicodeCharacter{1F5EF}{\includegraphics[height=1em]{\@emojifolder/1F5EF.png}}
 \DeclareUnicodeCharacter{1F4AD}{\includegraphics[height=1em]{\@emojifolder/1F4AD.png}}
 \DeclareUnicodeCharacter{1F573}{\includegraphics[height=1em]{\@emojifolder/1F573.png}}
-\DeclareUnicodeCharacter{1F5EF}{\includegraphics[height=1em]{\@emojifolder/1F5EF.png}}
 \DeclareUnicodeCharacter{1F453}{\includegraphics[height=1em]{\@emojifolder/1F453.png}}
 \DeclareUnicodeCharacter{1F576}{\includegraphics[height=1em]{\@emojifolder/1F576.png}}
 \DeclareUnicodeCharacter{1F454}{\includegraphics[height=1em]{\@emojifolder/1F454.png}}
@@ -317,38 +382,18 @@
 \DeclareUnicodeCharacter{1F451}{\includegraphics[height=1em]{\@emojifolder/1F451.png}}
 \DeclareUnicodeCharacter{1F452}{\includegraphics[height=1em]{\@emojifolder/1F452.png}}
 \DeclareUnicodeCharacter{1F3A9}{\includegraphics[height=1em]{\@emojifolder/1F3A9.png}}
+\DeclareUnicodeCharacter{1F393}{\includegraphics[height=1em]{\@emojifolder/1F393.png}}
 \DeclareUnicodeCharacter{1F4FF}{\includegraphics[height=1em]{\@emojifolder/1F4FF.png}}
 \DeclareUnicodeCharacter{1F484}{\includegraphics[height=1em]{\@emojifolder/1F484.png}}
 \DeclareUnicodeCharacter{1F48D}{\includegraphics[height=1em]{\@emojifolder/1F48D.png}}
 \DeclareUnicodeCharacter{1F48E}{\includegraphics[height=1em]{\@emojifolder/1F48E.png}}
-\DeclareUnicodeCharacter{1F479}{\includegraphics[height=1em]{\@emojifolder/1F479.png}}
-\DeclareUnicodeCharacter{1F47A}{\includegraphics[height=1em]{\@emojifolder/1F47A.png}}
-\DeclareUnicodeCharacter{1F47B}{\includegraphics[height=1em]{\@emojifolder/1F47B.png}}
-\DeclareUnicodeCharacter{1F480}{\includegraphics[height=1em]{\@emojifolder/1F480.png}}
-\DeclareUnicodeCharacter{2620}{\includegraphics[height=1em]{\@emojifolder/2620.png}}
-\DeclareUnicodeCharacter{1F47D}{\includegraphics[height=1em]{\@emojifolder/1F47D.png}}
-\DeclareUnicodeCharacter{1F47E}{\includegraphics[height=1em]{\@emojifolder/1F47E.png}}
-\DeclareUnicodeCharacter{1F916}{\includegraphics[height=1em]{\@emojifolder/1F916.png}}
-\DeclareUnicodeCharacter{1F4A9}{\includegraphics[height=1em]{\@emojifolder/1F4A9.png}}
 \DeclareUnicodeCharacter{1F435}{\includegraphics[height=1em]{\@emojifolder/1F435.png}}
-\DeclareUnicodeCharacter{1F648}{\includegraphics[height=1em]{\@emojifolder/1F648.png}}
-\DeclareUnicodeCharacter{1F649}{\includegraphics[height=1em]{\@emojifolder/1F649.png}}
-\DeclareUnicodeCharacter{1F64A}{\includegraphics[height=1em]{\@emojifolder/1F64A.png}}
 \DeclareUnicodeCharacter{1F412}{\includegraphics[height=1em]{\@emojifolder/1F412.png}}
 \DeclareUnicodeCharacter{1F436}{\includegraphics[height=1em]{\@emojifolder/1F436.png}}
 \DeclareUnicodeCharacter{1F415}{\includegraphics[height=1em]{\@emojifolder/1F415.png}}
 \DeclareUnicodeCharacter{1F429}{\includegraphics[height=1em]{\@emojifolder/1F429.png}}
 \DeclareUnicodeCharacter{1F43A}{\includegraphics[height=1em]{\@emojifolder/1F43A.png}}
 \DeclareUnicodeCharacter{1F431}{\includegraphics[height=1em]{\@emojifolder/1F431.png}}
-\DeclareUnicodeCharacter{1F638}{\includegraphics[height=1em]{\@emojifolder/1F638.png}}
-\DeclareUnicodeCharacter{1F639}{\includegraphics[height=1em]{\@emojifolder/1F639.png}}
-\DeclareUnicodeCharacter{1F63A}{\includegraphics[height=1em]{\@emojifolder/1F63A.png}}
-\DeclareUnicodeCharacter{1F63B}{\includegraphics[height=1em]{\@emojifolder/1F63B.png}}
-\DeclareUnicodeCharacter{1F63C}{\includegraphics[height=1em]{\@emojifolder/1F63C.png}}
-\DeclareUnicodeCharacter{1F63D}{\includegraphics[height=1em]{\@emojifolder/1F63D.png}}
-\DeclareUnicodeCharacter{1F63E}{\includegraphics[height=1em]{\@emojifolder/1F63E.png}}
-\DeclareUnicodeCharacter{1F63F}{\includegraphics[height=1em]{\@emojifolder/1F63F.png}}
-\DeclareUnicodeCharacter{1F640}{\includegraphics[height=1em]{\@emojifolder/1F640.png}}
 \DeclareUnicodeCharacter{1F408}{\includegraphics[height=1em]{\@emojifolder/1F408.png}}
 \DeclareUnicodeCharacter{1F981}{\includegraphics[height=1em]{\@emojifolder/1F981.png}}
 \DeclareUnicodeCharacter{1F42F}{\includegraphics[height=1em]{\@emojifolder/1F42F.png}}
@@ -527,11 +572,11 @@
 \DeclareUnicodeCharacter{1F3DA}{\includegraphics[height=1em]{\@emojifolder/1F3DA.png}}
 \DeclareUnicodeCharacter{1F3E0}{\includegraphics[height=1em]{\@emojifolder/1F3E0.png}}
 \DeclareUnicodeCharacter{1F3E1}{\includegraphics[height=1em]{\@emojifolder/1F3E1.png}}
-\DeclareUnicodeCharacter{1F6D0}{\includegraphics[height=1em]{\@emojifolder/1F6D0.png}}
 \DeclareUnicodeCharacter{26EA}{\includegraphics[height=1em]{\@emojifolder/26EA.png}}
 \DeclareUnicodeCharacter{1F54B}{\includegraphics[height=1em]{\@emojifolder/1F54B.png}}
 \DeclareUnicodeCharacter{1F54C}{\includegraphics[height=1em]{\@emojifolder/1F54C.png}}
 \DeclareUnicodeCharacter{1F54D}{\includegraphics[height=1em]{\@emojifolder/1F54D.png}}
+\DeclareUnicodeCharacter{26E9}{\includegraphics[height=1em]{\@emojifolder/26E9.png}}
 \DeclareUnicodeCharacter{1F3E2}{\includegraphics[height=1em]{\@emojifolder/1F3E2.png}}
 \DeclareUnicodeCharacter{1F3E3}{\includegraphics[height=1em]{\@emojifolder/1F3E3.png}}
 \DeclareUnicodeCharacter{1F3E4}{\includegraphics[height=1em]{\@emojifolder/1F3E4.png}}
@@ -558,9 +603,7 @@
 \DeclareUnicodeCharacter{1F306}{\includegraphics[height=1em]{\@emojifolder/1F306.png}}
 \DeclareUnicodeCharacter{1F307}{\includegraphics[height=1em]{\@emojifolder/1F307.png}}
 \DeclareUnicodeCharacter{1F309}{\includegraphics[height=1em]{\@emojifolder/1F309.png}}
-\DeclareUnicodeCharacter{1F30A}{\includegraphics[height=1em]{\@emojifolder/1F30A.png}}
 \DeclareUnicodeCharacter{2668}{\includegraphics[height=1em]{\@emojifolder/2668.png}}
-\DeclareUnicodeCharacter{1F5FF}{\includegraphics[height=1em]{\@emojifolder/1F5FF.png}}
 \DeclareUnicodeCharacter{1F30C}{\includegraphics[height=1em]{\@emojifolder/1F30C.png}}
 \DeclareUnicodeCharacter{1F3A0}{\includegraphics[height=1em]{\@emojifolder/1F3A0.png}}
 \DeclareUnicodeCharacter{1F3A1}{\includegraphics[height=1em]{\@emojifolder/1F3A1.png}}
@@ -601,14 +644,14 @@
 \DeclareUnicodeCharacter{1F69B}{\includegraphics[height=1em]{\@emojifolder/1F69B.png}}
 \DeclareUnicodeCharacter{1F69C}{\includegraphics[height=1em]{\@emojifolder/1F69C.png}}
 \DeclareUnicodeCharacter{1F6B2}{\includegraphics[height=1em]{\@emojifolder/1F6B2.png}}
-\DeclareUnicodeCharacter{1F6B3}{\includegraphics[height=1em]{\@emojifolder/1F6B3.png}}
 \DeclareUnicodeCharacter{26FD}{\includegraphics[height=1em]{\@emojifolder/26FD.png}}
-\DeclareUnicodeCharacter{1F6E2}{\includegraphics[height=1em]{\@emojifolder/1F6E2.png}}
 \DeclareUnicodeCharacter{1F6E3}{\includegraphics[height=1em]{\@emojifolder/1F6E3.png}}
 \DeclareUnicodeCharacter{1F6E4}{\includegraphics[height=1em]{\@emojifolder/1F6E4.png}}
 \DeclareUnicodeCharacter{1F6A8}{\includegraphics[height=1em]{\@emojifolder/1F6A8.png}}
+\DeclareUnicodeCharacter{1F6A5}{\includegraphics[height=1em]{\@emojifolder/1F6A5.png}}
+\DeclareUnicodeCharacter{1F6A6}{\includegraphics[height=1em]{\@emojifolder/1F6A6.png}}
+\DeclareUnicodeCharacter{1F6A7}{\includegraphics[height=1em]{\@emojifolder/1F6A7.png}}
 \DeclareUnicodeCharacter{2693}{\includegraphics[height=1em]{\@emojifolder/2693.png}}
-\DeclareUnicodeCharacter{1F531}{\includegraphics[height=1em]{\@emojifolder/1F531.png}}
 \DeclareUnicodeCharacter{26F5}{\includegraphics[height=1em]{\@emojifolder/26F5.png}}
 \DeclareUnicodeCharacter{1F6A3}{\includegraphics[height=1em]{\@emojifolder/1F6A3.png}}
 \DeclareUnicodeCharacter{1F6A4}{\includegraphics[height=1em]{\@emojifolder/1F6A4.png}}
@@ -627,30 +670,6 @@
 \DeclareUnicodeCharacter{1F6A1}{\includegraphics[height=1em]{\@emojifolder/1F6A1.png}}
 \DeclareUnicodeCharacter{1F680}{\includegraphics[height=1em]{\@emojifolder/1F680.png}}
 \DeclareUnicodeCharacter{1F6F0}{\includegraphics[height=1em]{\@emojifolder/1F6F0.png}}
-\DeclareUnicodeCharacter{1F3E7}{\includegraphics[height=1em]{\@emojifolder/1F3E7.png}}
-\DeclareUnicodeCharacter{1F6AE}{\includegraphics[height=1em]{\@emojifolder/1F6AE.png}}
-\DeclareUnicodeCharacter{1F6A5}{\includegraphics[height=1em]{\@emojifolder/1F6A5.png}}
-\DeclareUnicodeCharacter{1F6A6}{\includegraphics[height=1em]{\@emojifolder/1F6A6.png}}
-\DeclareUnicodeCharacter{1F6A7}{\includegraphics[height=1em]{\@emojifolder/1F6A7.png}}
-\DeclareUnicodeCharacter{1F6AB}{\includegraphics[height=1em]{\@emojifolder/1F6AB.png}}
-\DeclareUnicodeCharacter{1F6AD}{\includegraphics[height=1em]{\@emojifolder/1F6AD.png}}
-\DeclareUnicodeCharacter{1F6AF}{\includegraphics[height=1em]{\@emojifolder/1F6AF.png}}
-\DeclareUnicodeCharacter{1F6B0}{\includegraphics[height=1em]{\@emojifolder/1F6B0.png}}
-\DeclareUnicodeCharacter{1F6B1}{\includegraphics[height=1em]{\@emojifolder/1F6B1.png}}
-\DeclareUnicodeCharacter{1F6B7}{\includegraphics[height=1em]{\@emojifolder/1F6B7.png}}
-\DeclareUnicodeCharacter{1F6B8}{\includegraphics[height=1em]{\@emojifolder/1F6B8.png}}
-\DeclareUnicodeCharacter{267F}{\includegraphics[height=1em]{\@emojifolder/267F.png}}
-\DeclareUnicodeCharacter{1F6B9}{\includegraphics[height=1em]{\@emojifolder/1F6B9.png}}
-\DeclareUnicodeCharacter{1F6BA}{\includegraphics[height=1em]{\@emojifolder/1F6BA.png}}
-\DeclareUnicodeCharacter{1F6BB}{\includegraphics[height=1em]{\@emojifolder/1F6BB.png}}
-\DeclareUnicodeCharacter{1F6BC}{\includegraphics[height=1em]{\@emojifolder/1F6BC.png}}
-\DeclareUnicodeCharacter{1F6BE}{\includegraphics[height=1em]{\@emojifolder/1F6BE.png}}
-\DeclareUnicodeCharacter{1F6C2}{\includegraphics[height=1em]{\@emojifolder/1F6C2.png}}
-\DeclareUnicodeCharacter{1F6C3}{\includegraphics[height=1em]{\@emojifolder/1F6C3.png}}
-\DeclareUnicodeCharacter{1F6C4}{\includegraphics[height=1em]{\@emojifolder/1F6C4.png}}
-\DeclareUnicodeCharacter{1F6C5}{\includegraphics[height=1em]{\@emojifolder/1F6C5.png}}
-\DeclareUnicodeCharacter{26A0}{\includegraphics[height=1em]{\@emojifolder/26A0.png}}
-\DeclareUnicodeCharacter{26D4}{\includegraphics[height=1em]{\@emojifolder/26D4.png}}
 \DeclareUnicodeCharacter{1F6CE}{\includegraphics[height=1em]{\@emojifolder/1F6CE.png}}
 \DeclareUnicodeCharacter{1F6AA}{\includegraphics[height=1em]{\@emojifolder/1F6AA.png}}
 \DeclareUnicodeCharacter{1F6CC}{\includegraphics[height=1em]{\@emojifolder/1F6CC.png}}
@@ -691,19 +710,6 @@
 \DeclareUnicodeCharacter{1F565}{\includegraphics[height=1em]{\@emojifolder/1F565.png}}
 \DeclareUnicodeCharacter{1F55A}{\includegraphics[height=1em]{\@emojifolder/1F55A.png}}
 \DeclareUnicodeCharacter{1F566}{\includegraphics[height=1em]{\@emojifolder/1F566.png}}
-\DeclareUnicodeCharacter{2648}{\includegraphics[height=1em]{\@emojifolder/2648.png}}
-\DeclareUnicodeCharacter{2649}{\includegraphics[height=1em]{\@emojifolder/2649.png}}
-\DeclareUnicodeCharacter{264A}{\includegraphics[height=1em]{\@emojifolder/264A.png}}
-\DeclareUnicodeCharacter{264B}{\includegraphics[height=1em]{\@emojifolder/264B.png}}
-\DeclareUnicodeCharacter{264C}{\includegraphics[height=1em]{\@emojifolder/264C.png}}
-\DeclareUnicodeCharacter{264D}{\includegraphics[height=1em]{\@emojifolder/264D.png}}
-\DeclareUnicodeCharacter{264E}{\includegraphics[height=1em]{\@emojifolder/264E.png}}
-\DeclareUnicodeCharacter{264F}{\includegraphics[height=1em]{\@emojifolder/264F.png}}
-\DeclareUnicodeCharacter{2650}{\includegraphics[height=1em]{\@emojifolder/2650.png}}
-\DeclareUnicodeCharacter{2651}{\includegraphics[height=1em]{\@emojifolder/2651.png}}
-\DeclareUnicodeCharacter{2652}{\includegraphics[height=1em]{\@emojifolder/2652.png}}
-\DeclareUnicodeCharacter{2653}{\includegraphics[height=1em]{\@emojifolder/2653.png}}
-\DeclareUnicodeCharacter{26CE}{\includegraphics[height=1em]{\@emojifolder/26CE.png}}
 \DeclareUnicodeCharacter{1F311}{\includegraphics[height=1em]{\@emojifolder/1F311.png}}
 \DeclareUnicodeCharacter{1F312}{\includegraphics[height=1em]{\@emojifolder/1F312.png}}
 \DeclareUnicodeCharacter{1F313}{\includegraphics[height=1em]{\@emojifolder/1F313.png}}
@@ -720,6 +726,9 @@
 \DeclareUnicodeCharacter{2600}{\includegraphics[height=1em]{\@emojifolder/2600.png}}
 \DeclareUnicodeCharacter{1F31D}{\includegraphics[height=1em]{\@emojifolder/1F31D.png}}
 \DeclareUnicodeCharacter{1F31E}{\includegraphics[height=1em]{\@emojifolder/1F31E.png}}
+\DeclareUnicodeCharacter{2B50}{\includegraphics[height=1em]{\@emojifolder/2B50.png}}
+\DeclareUnicodeCharacter{1F31F}{\includegraphics[height=1em]{\@emojifolder/1F31F.png}}
+\DeclareUnicodeCharacter{1F320}{\includegraphics[height=1em]{\@emojifolder/1F320.png}}
 \DeclareUnicodeCharacter{2601}{\includegraphics[height=1em]{\@emojifolder/2601.png}}
 \DeclareUnicodeCharacter{26C5}{\includegraphics[height=1em]{\@emojifolder/26C5.png}}
 \DeclareUnicodeCharacter{26C8}{\includegraphics[height=1em]{\@emojifolder/26C8.png}}
@@ -738,16 +747,16 @@
 \DeclareUnicodeCharacter{2602}{\includegraphics[height=1em]{\@emojifolder/2602.png}}
 \DeclareUnicodeCharacter{2614}{\includegraphics[height=1em]{\@emojifolder/2614.png}}
 \DeclareUnicodeCharacter{26F1}{\includegraphics[height=1em]{\@emojifolder/26F1.png}}
+\DeclareUnicodeCharacter{26A1}{\includegraphics[height=1em]{\@emojifolder/26A1.png}}
 \DeclareUnicodeCharacter{2744}{\includegraphics[height=1em]{\@emojifolder/2744.png}}
 \DeclareUnicodeCharacter{2603}{\includegraphics[height=1em]{\@emojifolder/2603.png}}
 \DeclareUnicodeCharacter{26C4}{\includegraphics[height=1em]{\@emojifolder/26C4.png}}
-\DeclareUnicodeCharacter{1F31F}{\includegraphics[height=1em]{\@emojifolder/1F31F.png}}
-\DeclareUnicodeCharacter{1F320}{\includegraphics[height=1em]{\@emojifolder/1F320.png}}
 \DeclareUnicodeCharacter{2604}{\includegraphics[height=1em]{\@emojifolder/2604.png}}
 \DeclareUnicodeCharacter{1F525}{\includegraphics[height=1em]{\@emojifolder/1F525.png}}
+\DeclareUnicodeCharacter{1F4A7}{\includegraphics[height=1em]{\@emojifolder/1F4A7.png}}
+\DeclareUnicodeCharacter{1F30A}{\includegraphics[height=1em]{\@emojifolder/1F30A.png}}
 \DeclareUnicodeCharacter{1F383}{\includegraphics[height=1em]{\@emojifolder/1F383.png}}
 \DeclareUnicodeCharacter{1F384}{\includegraphics[height=1em]{\@emojifolder/1F384.png}}
-\DeclareUnicodeCharacter{1F54E}{\includegraphics[height=1em]{\@emojifolder/1F54E.png}}
 \DeclareUnicodeCharacter{1F386}{\includegraphics[height=1em]{\@emojifolder/1F386.png}}
 \DeclareUnicodeCharacter{1F387}{\includegraphics[height=1em]{\@emojifolder/1F387.png}}
 \DeclareUnicodeCharacter{2728}{\includegraphics[height=1em]{\@emojifolder/2728.png}}
@@ -761,9 +770,6 @@
 \DeclareUnicodeCharacter{1F38F}{\includegraphics[height=1em]{\@emojifolder/1F38F.png}}
 \DeclareUnicodeCharacter{1F390}{\includegraphics[height=1em]{\@emojifolder/1F390.png}}
 \DeclareUnicodeCharacter{1F391}{\includegraphics[height=1em]{\@emojifolder/1F391.png}}
-\DeclareUnicodeCharacter{1F393}{\includegraphics[height=1em]{\@emojifolder/1F393.png}}
-\DeclareUnicodeCharacter{1F3AF}{\includegraphics[height=1em]{\@emojifolder/1F3AF.png}}
-\DeclareUnicodeCharacter{1F3B4}{\includegraphics[height=1em]{\@emojifolder/1F3B4.png}}
 \DeclareUnicodeCharacter{1F380}{\includegraphics[height=1em]{\@emojifolder/1F380.png}}
 \DeclareUnicodeCharacter{1F381}{\includegraphics[height=1em]{\@emojifolder/1F381.png}}
 \DeclareUnicodeCharacter{1F396}{\includegraphics[height=1em]{\@emojifolder/1F396.png}}
@@ -805,6 +811,7 @@
 \DeclareUnicodeCharacter{1F3D2}{\includegraphics[height=1em]{\@emojifolder/1F3D2.png}}
 \DeclareUnicodeCharacter{1F3D3}{\includegraphics[height=1em]{\@emojifolder/1F3D3.png}}
 \DeclareUnicodeCharacter{1F3F8}{\includegraphics[height=1em]{\@emojifolder/1F3F8.png}}
+\DeclareUnicodeCharacter{1F3AF}{\includegraphics[height=1em]{\@emojifolder/1F3AF.png}}
 \DeclareUnicodeCharacter{1F3AE}{\includegraphics[height=1em]{\@emojifolder/1F3AE.png}}
 \DeclareUnicodeCharacter{1F579}{\includegraphics[height=1em]{\@emojifolder/1F579.png}}
 \DeclareUnicodeCharacter{1F3B2}{\includegraphics[height=1em]{\@emojifolder/1F3B2.png}}
@@ -814,6 +821,7 @@
 \DeclareUnicodeCharacter{2663}{\includegraphics[height=1em]{\@emojifolder/2663.png}}
 \DeclareUnicodeCharacter{1F0CF}{\includegraphics[height=1em]{\@emojifolder/1F0CF.png}}
 \DeclareUnicodeCharacter{1F004}{\includegraphics[height=1em]{\@emojifolder/1F004.png}}
+\DeclareUnicodeCharacter{1F3B4}{\includegraphics[height=1em]{\@emojifolder/1F3B4.png}}
 \DeclareUnicodeCharacter{1F507}{\includegraphics[height=1em]{\@emojifolder/1F507.png}}
 \DeclareUnicodeCharacter{1F508}{\includegraphics[height=1em]{\@emojifolder/1F508.png}}
 \DeclareUnicodeCharacter{1F509}{\includegraphics[height=1em]{\@emojifolder/1F509.png}}
@@ -823,24 +831,6 @@
 \DeclareUnicodeCharacter{1F4EF}{\includegraphics[height=1em]{\@emojifolder/1F4EF.png}}
 \DeclareUnicodeCharacter{1F514}{\includegraphics[height=1em]{\@emojifolder/1F514.png}}
 \DeclareUnicodeCharacter{1F515}{\includegraphics[height=1em]{\@emojifolder/1F515.png}}
-\DeclareUnicodeCharacter{1F500}{\includegraphics[height=1em]{\@emojifolder/1F500.png}}
-\DeclareUnicodeCharacter{1F501}{\includegraphics[height=1em]{\@emojifolder/1F501.png}}
-\DeclareUnicodeCharacter{1F502}{\includegraphics[height=1em]{\@emojifolder/1F502.png}}
-\DeclareUnicodeCharacter{25B6}{\includegraphics[height=1em]{\@emojifolder/25B6.png}}
-\DeclareUnicodeCharacter{23E9}{\includegraphics[height=1em]{\@emojifolder/23E9.png}}
-\DeclareUnicodeCharacter{23ED}{\includegraphics[height=1em]{\@emojifolder/23ED.png}}
-\DeclareUnicodeCharacter{23EF}{\includegraphics[height=1em]{\@emojifolder/23EF.png}}
-\DeclareUnicodeCharacter{25C0}{\includegraphics[height=1em]{\@emojifolder/25C0.png}}
-\DeclareUnicodeCharacter{23EA}{\includegraphics[height=1em]{\@emojifolder/23EA.png}}
-\DeclareUnicodeCharacter{23EE}{\includegraphics[height=1em]{\@emojifolder/23EE.png}}
-\DeclareUnicodeCharacter{1F53C}{\includegraphics[height=1em]{\@emojifolder/1F53C.png}}
-\DeclareUnicodeCharacter{23EB}{\includegraphics[height=1em]{\@emojifolder/23EB.png}}
-\DeclareUnicodeCharacter{1F53D}{\includegraphics[height=1em]{\@emojifolder/1F53D.png}}
-\DeclareUnicodeCharacter{23EC}{\includegraphics[height=1em]{\@emojifolder/23EC.png}}
-\DeclareUnicodeCharacter{23F8}{\includegraphics[height=1em]{\@emojifolder/23F8.png}}
-\DeclareUnicodeCharacter{23F9}{\includegraphics[height=1em]{\@emojifolder/23F9.png}}
-\DeclareUnicodeCharacter{23FA}{\includegraphics[height=1em]{\@emojifolder/23FA.png}}
-\DeclareUnicodeCharacter{23CF}{\includegraphics[height=1em]{\@emojifolder/23CF.png}}
 \DeclareUnicodeCharacter{1F3BC}{\includegraphics[height=1em]{\@emojifolder/1F3BC.png}}
 \DeclareUnicodeCharacter{1F3B5}{\includegraphics[height=1em]{\@emojifolder/1F3B5.png}}
 \DeclareUnicodeCharacter{1F3B6}{\includegraphics[height=1em]{\@emojifolder/1F3B6.png}}
@@ -856,14 +846,9 @@
 \DeclareUnicodeCharacter{1F3BB}{\includegraphics[height=1em]{\@emojifolder/1F3BB.png}}
 \DeclareUnicodeCharacter{1F4FB}{\includegraphics[height=1em]{\@emojifolder/1F4FB.png}}
 \DeclareUnicodeCharacter{1F4F1}{\includegraphics[height=1em]{\@emojifolder/1F4F1.png}}
-\DeclareUnicodeCharacter{1F4F3}{\includegraphics[height=1em]{\@emojifolder/1F4F3.png}}
-\DeclareUnicodeCharacter{1F4F4}{\includegraphics[height=1em]{\@emojifolder/1F4F4.png}}
 \DeclareUnicodeCharacter{1F4F2}{\includegraphics[height=1em]{\@emojifolder/1F4F2.png}}
-\DeclareUnicodeCharacter{1F4F5}{\includegraphics[height=1em]{\@emojifolder/1F4F5.png}}
 \DeclareUnicodeCharacter{260E}{\includegraphics[height=1em]{\@emojifolder/260E.png}}
 \DeclareUnicodeCharacter{1F4DE}{\includegraphics[height=1em]{\@emojifolder/1F4DE.png}}
-\DeclareUnicodeCharacter{1F51F}{\includegraphics[height=1em]{\@emojifolder/1F51F.png}}
-\DeclareUnicodeCharacter{1F4F6}{\includegraphics[height=1em]{\@emojifolder/1F4F6.png}}
 \DeclareUnicodeCharacter{1F4DF}{\includegraphics[height=1em]{\@emojifolder/1F4DF.png}}
 \DeclareUnicodeCharacter{1F4E0}{\includegraphics[height=1em]{\@emojifolder/1F4E0.png}}
 \DeclareUnicodeCharacter{1F50B}{\includegraphics[height=1em]{\@emojifolder/1F50B.png}}
@@ -879,7 +864,6 @@
 \DeclareUnicodeCharacter{1F4BF}{\includegraphics[height=1em]{\@emojifolder/1F4BF.png}}
 \DeclareUnicodeCharacter{1F4C0}{\includegraphics[height=1em]{\@emojifolder/1F4C0.png}}
 \DeclareUnicodeCharacter{1F3A5}{\includegraphics[height=1em]{\@emojifolder/1F3A5.png}}
-\DeclareUnicodeCharacter{1F3A6}{\includegraphics[height=1em]{\@emojifolder/1F3A6.png}}
 \DeclareUnicodeCharacter{1F3AC}{\includegraphics[height=1em]{\@emojifolder/1F3AC.png}}
 \DeclareUnicodeCharacter{1F4FD}{\includegraphics[height=1em]{\@emojifolder/1F4FD.png}}
 \DeclareUnicodeCharacter{1F4FA}{\includegraphics[height=1em]{\@emojifolder/1F4FA.png}}
@@ -887,8 +871,6 @@
 \DeclareUnicodeCharacter{1F4F8}{\includegraphics[height=1em]{\@emojifolder/1F4F8.png}}
 \DeclareUnicodeCharacter{1F4F9}{\includegraphics[height=1em]{\@emojifolder/1F4F9.png}}
 \DeclareUnicodeCharacter{1F4FC}{\includegraphics[height=1em]{\@emojifolder/1F4FC.png}}
-\DeclareUnicodeCharacter{1F505}{\includegraphics[height=1em]{\@emojifolder/1F505.png}}
-\DeclareUnicodeCharacter{1F506}{\includegraphics[height=1em]{\@emojifolder/1F506.png}}
 \DeclareUnicodeCharacter{1F50D}{\includegraphics[height=1em]{\@emojifolder/1F50D.png}}
 \DeclareUnicodeCharacter{1F50E}{\includegraphics[height=1em]{\@emojifolder/1F50E.png}}
 \DeclareUnicodeCharacter{1F52C}{\includegraphics[height=1em]{\@emojifolder/1F52C.png}}
@@ -920,8 +902,6 @@
 \DeclareUnicodeCharacter{1F4B6}{\includegraphics[height=1em]{\@emojifolder/1F4B6.png}}
 \DeclareUnicodeCharacter{1F4B7}{\includegraphics[height=1em]{\@emojifolder/1F4B7.png}}
 \DeclareUnicodeCharacter{1F4B8}{\includegraphics[height=1em]{\@emojifolder/1F4B8.png}}
-\DeclareUnicodeCharacter{1F4B1}{\includegraphics[height=1em]{\@emojifolder/1F4B1.png}}
-\DeclareUnicodeCharacter{1F4B2}{\includegraphics[height=1em]{\@emojifolder/1F4B2.png}}
 \DeclareUnicodeCharacter{1F4B3}{\includegraphics[height=1em]{\@emojifolder/1F4B3.png}}
 \DeclareUnicodeCharacter{1F4B9}{\includegraphics[height=1em]{\@emojifolder/1F4B9.png}}
 \DeclareUnicodeCharacter{2709}{\includegraphics[height=1em]{\@emojifolder/2709.png}}
@@ -963,7 +943,6 @@
 \DeclareUnicodeCharacter{1F587}{\includegraphics[height=1em]{\@emojifolder/1F587.png}}
 \DeclareUnicodeCharacter{1F4CF}{\includegraphics[height=1em]{\@emojifolder/1F4CF.png}}
 \DeclareUnicodeCharacter{1F4D0}{\includegraphics[height=1em]{\@emojifolder/1F4D0.png}}
-\DeclareUnicodeCharacter{1F4DB}{\includegraphics[height=1em]{\@emojifolder/1F4DB.png}}
 \DeclareUnicodeCharacter{2702}{\includegraphics[height=1em]{\@emojifolder/2702.png}}
 \DeclareUnicodeCharacter{1F5C3}{\includegraphics[height=1em]{\@emojifolder/1F5C3.png}}
 \DeclareUnicodeCharacter{1F5C4}{\includegraphics[height=1em]{\@emojifolder/1F5C4.png}}
@@ -994,13 +973,40 @@
 \DeclareUnicodeCharacter{1F52B}{\includegraphics[height=1em]{\@emojifolder/1F52B.png}}
 \DeclareUnicodeCharacter{1F6E1}{\includegraphics[height=1em]{\@emojifolder/1F6E1.png}}
 \DeclareUnicodeCharacter{1F3F9}{\includegraphics[height=1em]{\@emojifolder/1F3F9.png}}
-\DeclareUnicodeCharacter{1F6AC}{\includegraphics[height=1em]{\@emojifolder/1F6AC.png}}
-\DeclareUnicodeCharacter{26B0}{\includegraphics[height=1em]{\@emojifolder/26B0.png}}
-\DeclareUnicodeCharacter{26B1}{\includegraphics[height=1em]{\@emojifolder/26B1.png}}
 \DeclareUnicodeCharacter{1F3C1}{\includegraphics[height=1em]{\@emojifolder/1F3C1.png}}
 \DeclareUnicodeCharacter{1F3F3}{\includegraphics[height=1em]{\@emojifolder/1F3F3.png}}
 \DeclareUnicodeCharacter{1F3F4}{\includegraphics[height=1em]{\@emojifolder/1F3F4.png}}
 \DeclareUnicodeCharacter{1F6A9}{\includegraphics[height=1em]{\@emojifolder/1F6A9.png}}
+\DeclareUnicodeCharacter{1F6AC}{\includegraphics[height=1em]{\@emojifolder/1F6AC.png}}
+\DeclareUnicodeCharacter{26B0}{\includegraphics[height=1em]{\@emojifolder/26B0.png}}
+\DeclareUnicodeCharacter{26B1}{\includegraphics[height=1em]{\@emojifolder/26B1.png}}
+\DeclareUnicodeCharacter{1F5FF}{\includegraphics[height=1em]{\@emojifolder/1F5FF.png}}
+\DeclareUnicodeCharacter{1F6E2}{\includegraphics[height=1em]{\@emojifolder/1F6E2.png}}
+\DeclareUnicodeCharacter{1F52E}{\includegraphics[height=1em]{\@emojifolder/1F52E.png}}
+\DeclareUnicodeCharacter{1F3E7}{\includegraphics[height=1em]{\@emojifolder/1F3E7.png}}
+\DeclareUnicodeCharacter{1F6AE}{\includegraphics[height=1em]{\@emojifolder/1F6AE.png}}
+\DeclareUnicodeCharacter{1F6B0}{\includegraphics[height=1em]{\@emojifolder/1F6B0.png}}
+\DeclareUnicodeCharacter{267F}{\includegraphics[height=1em]{\@emojifolder/267F.png}}
+\DeclareUnicodeCharacter{1F6B9}{\includegraphics[height=1em]{\@emojifolder/1F6B9.png}}
+\DeclareUnicodeCharacter{1F6BA}{\includegraphics[height=1em]{\@emojifolder/1F6BA.png}}
+\DeclareUnicodeCharacter{1F6BB}{\includegraphics[height=1em]{\@emojifolder/1F6BB.png}}
+\DeclareUnicodeCharacter{1F6BC}{\includegraphics[height=1em]{\@emojifolder/1F6BC.png}}
+\DeclareUnicodeCharacter{1F6BE}{\includegraphics[height=1em]{\@emojifolder/1F6BE.png}}
+\DeclareUnicodeCharacter{1F6C2}{\includegraphics[height=1em]{\@emojifolder/1F6C2.png}}
+\DeclareUnicodeCharacter{1F6C3}{\includegraphics[height=1em]{\@emojifolder/1F6C3.png}}
+\DeclareUnicodeCharacter{1F6C4}{\includegraphics[height=1em]{\@emojifolder/1F6C4.png}}
+\DeclareUnicodeCharacter{1F6C5}{\includegraphics[height=1em]{\@emojifolder/1F6C5.png}}
+\DeclareUnicodeCharacter{26A0}{\includegraphics[height=1em]{\@emojifolder/26A0.png}}
+\DeclareUnicodeCharacter{1F6B8}{\includegraphics[height=1em]{\@emojifolder/1F6B8.png}}
+\DeclareUnicodeCharacter{26D4}{\includegraphics[height=1em]{\@emojifolder/26D4.png}}
+\DeclareUnicodeCharacter{1F6AB}{\includegraphics[height=1em]{\@emojifolder/1F6AB.png}}
+\DeclareUnicodeCharacter{1F6B3}{\includegraphics[height=1em]{\@emojifolder/1F6B3.png}}
+\DeclareUnicodeCharacter{1F6AD}{\includegraphics[height=1em]{\@emojifolder/1F6AD.png}}
+\DeclareUnicodeCharacter{1F6AF}{\includegraphics[height=1em]{\@emojifolder/1F6AF.png}}
+\DeclareUnicodeCharacter{1F6B1}{\includegraphics[height=1em]{\@emojifolder/1F6B1.png}}
+\DeclareUnicodeCharacter{1F6B7}{\includegraphics[height=1em]{\@emojifolder/1F6B7.png}}
+\DeclareUnicodeCharacter{2622}{\includegraphics[height=1em]{\@emojifolder/2622.png}}
+\DeclareUnicodeCharacter{2623}{\includegraphics[height=1em]{\@emojifolder/2623.png}}
 \DeclareUnicodeCharacter{2B06}{\includegraphics[height=1em]{\@emojifolder/2B06.png}}
 \DeclareUnicodeCharacter{2197}{\includegraphics[height=1em]{\@emojifolder/2197.png}}
 \DeclareUnicodeCharacter{27A1}{\includegraphics[height=1em]{\@emojifolder/27A1.png}}
@@ -1022,8 +1028,7 @@
 \DeclareUnicodeCharacter{1F51B}{\includegraphics[height=1em]{\@emojifolder/1F51B.png}}
 \DeclareUnicodeCharacter{1F51C}{\includegraphics[height=1em]{\@emojifolder/1F51C.png}}
 \DeclareUnicodeCharacter{1F51D}{\includegraphics[height=1em]{\@emojifolder/1F51D.png}}
-\DeclareUnicodeCharacter{269C}{\includegraphics[height=1em]{\@emojifolder/269C.png}}
-\DeclareUnicodeCharacter{1F530}{\includegraphics[height=1em]{\@emojifolder/1F530.png}}
+\DeclareUnicodeCharacter{1F6D0}{\includegraphics[height=1em]{\@emojifolder/1F6D0.png}}
 \DeclareUnicodeCharacter{269B}{\includegraphics[height=1em]{\@emojifolder/269B.png}}
 \DeclareUnicodeCharacter{1F549}{\includegraphics[height=1em]{\@emojifolder/1F549.png}}
 \DeclareUnicodeCharacter{2721}{\includegraphics[height=1em]{\@emojifolder/2721.png}}
@@ -1031,16 +1036,15 @@
 \DeclareUnicodeCharacter{262F}{\includegraphics[height=1em]{\@emojifolder/262F.png}}
 \DeclareUnicodeCharacter{271D}{\includegraphics[height=1em]{\@emojifolder/271D.png}}
 \DeclareUnicodeCharacter{2626}{\includegraphics[height=1em]{\@emojifolder/2626.png}}
-\DeclareUnicodeCharacter{26E9}{\includegraphics[height=1em]{\@emojifolder/26E9.png}}
 \DeclareUnicodeCharacter{262A}{\includegraphics[height=1em]{\@emojifolder/262A.png}}
 \DeclareUnicodeCharacter{262E}{\includegraphics[height=1em]{\@emojifolder/262E.png}}
-\DeclareUnicodeCharacter{1F52E}{\includegraphics[height=1em]{\@emojifolder/1F52E.png}}
+\DeclareUnicodeCharacter{1F54E}{\includegraphics[height=1em]{\@emojifolder/1F54E.png}}
 \DeclareUnicodeCharacter{1F52F}{\includegraphics[height=1em]{\@emojifolder/1F52F.png}}
 \DeclareUnicodeCharacter{267B}{\includegraphics[height=1em]{\@emojifolder/267B.png}}
-\DeclareUnicodeCharacter{2622}{\includegraphics[height=1em]{\@emojifolder/2622.png}}
-\DeclareUnicodeCharacter{2623}{\includegraphics[height=1em]{\@emojifolder/2623.png}}
-\DeclareUnicodeCharacter{26A1}{\includegraphics[height=1em]{\@emojifolder/26A1.png}}
-\DeclareUnicodeCharacter{2B50}{\includegraphics[height=1em]{\@emojifolder/2B50.png}}
+\DeclareUnicodeCharacter{1F4DB}{\includegraphics[height=1em]{\@emojifolder/1F4DB.png}}
+\DeclareUnicodeCharacter{269C}{\includegraphics[height=1em]{\@emojifolder/269C.png}}
+\DeclareUnicodeCharacter{1F530}{\includegraphics[height=1em]{\@emojifolder/1F530.png}}
+\DeclareUnicodeCharacter{1F531}{\includegraphics[height=1em]{\@emojifolder/1F531.png}}
 \DeclareUnicodeCharacter{2B55}{\includegraphics[height=1em]{\@emojifolder/2B55.png}}
 \DeclareUnicodeCharacter{2705}{\includegraphics[height=1em]{\@emojifolder/2705.png}}
 \DeclareUnicodeCharacter{2611}{\includegraphics[height=1em]{\@emojifolder/2611.png}}
@@ -1057,6 +1061,8 @@
 \DeclareUnicodeCharacter{2733}{\includegraphics[height=1em]{\@emojifolder/2733.png}}
 \DeclareUnicodeCharacter{2734}{\includegraphics[height=1em]{\@emojifolder/2734.png}}
 \DeclareUnicodeCharacter{2747}{\includegraphics[height=1em]{\@emojifolder/2747.png}}
+\DeclareUnicodeCharacter{1F4B1}{\includegraphics[height=1em]{\@emojifolder/1F4B1.png}}
+\DeclareUnicodeCharacter{1F4B2}{\includegraphics[height=1em]{\@emojifolder/1F4B2.png}}
 \DeclareUnicodeCharacter{203C}{\includegraphics[height=1em]{\@emojifolder/203C.png}}
 \DeclareUnicodeCharacter{2049}{\includegraphics[height=1em]{\@emojifolder/2049.png}}
 \DeclareUnicodeCharacter{2753}{\includegraphics[height=1em]{\@emojifolder/2753.png}}
@@ -1067,6 +1073,45 @@
 \DeclareUnicodeCharacter{00A9}{\includegraphics[height=1em]{\@emojifolder/00A9.png}}
 \DeclareUnicodeCharacter{00AE}{\includegraphics[height=1em]{\@emojifolder/00AE.png}}
 \DeclareUnicodeCharacter{2122}{\includegraphics[height=1em]{\@emojifolder/2122.png}}
+\DeclareUnicodeCharacter{2648}{\includegraphics[height=1em]{\@emojifolder/2648.png}}
+\DeclareUnicodeCharacter{2649}{\includegraphics[height=1em]{\@emojifolder/2649.png}}
+\DeclareUnicodeCharacter{264A}{\includegraphics[height=1em]{\@emojifolder/264A.png}}
+\DeclareUnicodeCharacter{264B}{\includegraphics[height=1em]{\@emojifolder/264B.png}}
+\DeclareUnicodeCharacter{264C}{\includegraphics[height=1em]{\@emojifolder/264C.png}}
+\DeclareUnicodeCharacter{264D}{\includegraphics[height=1em]{\@emojifolder/264D.png}}
+\DeclareUnicodeCharacter{264E}{\includegraphics[height=1em]{\@emojifolder/264E.png}}
+\DeclareUnicodeCharacter{264F}{\includegraphics[height=1em]{\@emojifolder/264F.png}}
+\DeclareUnicodeCharacter{2650}{\includegraphics[height=1em]{\@emojifolder/2650.png}}
+\DeclareUnicodeCharacter{2651}{\includegraphics[height=1em]{\@emojifolder/2651.png}}
+\DeclareUnicodeCharacter{2652}{\includegraphics[height=1em]{\@emojifolder/2652.png}}
+\DeclareUnicodeCharacter{2653}{\includegraphics[height=1em]{\@emojifolder/2653.png}}
+\DeclareUnicodeCharacter{26CE}{\includegraphics[height=1em]{\@emojifolder/26CE.png}}
+\DeclareUnicodeCharacter{1F500}{\includegraphics[height=1em]{\@emojifolder/1F500.png}}
+\DeclareUnicodeCharacter{1F501}{\includegraphics[height=1em]{\@emojifolder/1F501.png}}
+\DeclareUnicodeCharacter{1F502}{\includegraphics[height=1em]{\@emojifolder/1F502.png}}
+\DeclareUnicodeCharacter{25B6}{\includegraphics[height=1em]{\@emojifolder/25B6.png}}
+\DeclareUnicodeCharacter{23E9}{\includegraphics[height=1em]{\@emojifolder/23E9.png}}
+\DeclareUnicodeCharacter{23ED}{\includegraphics[height=1em]{\@emojifolder/23ED.png}}
+\DeclareUnicodeCharacter{23EF}{\includegraphics[height=1em]{\@emojifolder/23EF.png}}
+\DeclareUnicodeCharacter{25C0}{\includegraphics[height=1em]{\@emojifolder/25C0.png}}
+\DeclareUnicodeCharacter{23EA}{\includegraphics[height=1em]{\@emojifolder/23EA.png}}
+\DeclareUnicodeCharacter{23EE}{\includegraphics[height=1em]{\@emojifolder/23EE.png}}
+\DeclareUnicodeCharacter{1F53C}{\includegraphics[height=1em]{\@emojifolder/1F53C.png}}
+\DeclareUnicodeCharacter{23EB}{\includegraphics[height=1em]{\@emojifolder/23EB.png}}
+\DeclareUnicodeCharacter{1F53D}{\includegraphics[height=1em]{\@emojifolder/1F53D.png}}
+\DeclareUnicodeCharacter{23EC}{\includegraphics[height=1em]{\@emojifolder/23EC.png}}
+\DeclareUnicodeCharacter{23F8}{\includegraphics[height=1em]{\@emojifolder/23F8.png}}
+\DeclareUnicodeCharacter{23F9}{\includegraphics[height=1em]{\@emojifolder/23F9.png}}
+\DeclareUnicodeCharacter{23FA}{\includegraphics[height=1em]{\@emojifolder/23FA.png}}
+\DeclareUnicodeCharacter{23CF}{\includegraphics[height=1em]{\@emojifolder/23CF.png}}
+\DeclareUnicodeCharacter{1F3A6}{\includegraphics[height=1em]{\@emojifolder/1F3A6.png}}
+\DeclareUnicodeCharacter{1F505}{\includegraphics[height=1em]{\@emojifolder/1F505.png}}
+\DeclareUnicodeCharacter{1F506}{\includegraphics[height=1em]{\@emojifolder/1F506.png}}
+\DeclareUnicodeCharacter{1F4F6}{\includegraphics[height=1em]{\@emojifolder/1F4F6.png}}
+\DeclareUnicodeCharacter{1F4F5}{\includegraphics[height=1em]{\@emojifolder/1F4F5.png}}
+\DeclareUnicodeCharacter{1F4F3}{\includegraphics[height=1em]{\@emojifolder/1F4F3.png}}
+\DeclareUnicodeCharacter{1F4F4}{\includegraphics[height=1em]{\@emojifolder/1F4F4.png}}
+\DeclareUnicodeCharacter{1F51F}{\includegraphics[height=1em]{\@emojifolder/1F51F.png}}
 \DeclareUnicodeCharacter{1F4AF}{\includegraphics[height=1em]{\@emojifolder/1F4AF.png}}
 \DeclareUnicodeCharacter{1F51E}{\includegraphics[height=1em]{\@emojifolder/1F51E.png}}
 \DeclareUnicodeCharacter{1F520}{\includegraphics[height=1em]{\@emojifolder/1F520.png}}

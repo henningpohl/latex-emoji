@@ -58,14 +58,18 @@ def scrape():
         out_codes = []
         for row in header.find_next_siblings('tr'):
             fields = {k:c for k, c in zip(keys, row.find_all('td')) }
+            if 'code' not in fields:
+                continue
+
             codes = fields['code'].text.replace('U+', '').split(' ')
             filename = "-".join(codes) + ".png"
 
             save_image('ios', fields['apple'], filename)
-            save_image('android', fields['andr'], filename)
-            save_image('twitter', fields['twit'], filename)
-            save_image('windows', fields['wind'], filename)
-            save_image('bw', fields['b&w'], filename)
+            save_image('android', fields['goog.'], filename)
+            save_image('twitter', fields['twtr.'], filename)
+            save_image('windows', fields['wind.'], filename)
+            save_image('one', fields['one'], filename)
+            save_image('bw', fields['chart'], filename)
 
             if len(codes) == 1:
                 out_codes.append("".join(codes))

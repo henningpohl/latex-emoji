@@ -4,9 +4,11 @@
 \RequirePackage{kvoptions}
 \RequirePackage{etoolbox}
 \RequirePackage{xcolor}
+\RequirePackage{xstring}
 \RequirePackage{ifthen}
 \RequirePackage{ifxetex}
 \RequirePackage{ifluatex}
+\RequirePackage{accsupp}
 
 \SetupKeyvalOptions{family=emoji, prefix=emoji@}
 
@@ -92,35 +94,70 @@
 }
 
 \newcommand{\@emojiimgtext}[2]{%
-  \ifx\emoji@font\@empty%
-    \rlap{\emojilist{\@itemToChar}{#2}}%
+   % This is an ugly hack and fails for emoji with more than five hyphens
+   % Should be list processing, but that failed somehow
+  \StrCut{#2}{-}{\a}{\b}%
+  \StrCut{\b}{-}{\b}{\c}%
+  \StrCut{\c}{-}{\c}{\d}%
+  \StrCut{\d}{-}{\d}{\e}%
+  \StrCut{\e}{-}{\e}{\f}%
+  %
+  \ifx\b\empty%
+    \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a},unicode,space}%
+      \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+    \EndAccSupp{}%
   \else%
-    \rlap{\fontspec[Opacity=0]{\emoji@font}\emojilist{\@itemToChar}{#2}}%
+    \ifx\c\empty%
+      \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a}\unichar{"\b},unicode,space}%
+        \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+      \EndAccSupp{}%
+    \else%
+      \ifx\d\empty%
+        \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a}\unichar{"\b}\unichar{"\c},unicode,space}%
+          \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+        \EndAccSupp{}%
+      \else%
+        \ifx\e\empty%
+          \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a}\unichar{"\b}\unichar{"\c}\unichar{"\d},unicode,space}%
+            \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+          \EndAccSupp{}%
+        \else%
+          \ifx\f\empty%
+            \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a}\unichar{"\b}\unichar{"\c}\unichar{"\d}\unichar{"\e},unicode,space}%
+              \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+            \EndAccSupp{}%
+          \else%
+            \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a}\unichar{"\b}\unichar{"\c}\unichar{"\d}\unichar{"\e}\unichar{"\f},unicode,space}%
+              \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
+            \EndAccSupp{}%
+          \fi%
+        \fi%
+      \fi%
+    \fi%
   \fi%
-  \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
 }
 
 \newcommand{\emoji}[2][\@emojifolder]{%
   \leavevmode%
   \ifthenelse{\equal{#1}{text}}{%
     \ifxetex%
-	  \@emojitext{#2}%
-	\else%
-	  \ifluatex%
+      \@emojitext{#2}%
+    \else%
+      \ifluatex%
         \@emojitext{#2}%
       \else%
         \textbf{not available in pdftex}%
-      \fi%		
+      \fi%
   }{%
     \ifxetex%
-	  \@emojiimg{#1}{#2}%
-	\else%
-	  \ifluatex%
-	    \@emojiimgtext{#1}{#2}%
-	  \else%
-	    \@emojiimg{#1}{#2}%
-	  \fi%
-	\fi%
+      \@emojiimg{#1}{#2}%
+    \else%
+      \ifluatex%
+        \@emojiimgtext{#1}{#2}%
+      \else%
+        \@emojiimg{#1}{#2}%
+      \fi%
+    \fi%
   }%
 }
 
