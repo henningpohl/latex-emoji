@@ -5,6 +5,7 @@
 \RequirePackage{etoolbox}
 \RequirePackage{xcolor}
 \RequirePackage{xstring}
+\RequirePackage{ucs}
 \RequirePackage{ifthen}
 \RequirePackage{ifxetex}
 \RequirePackage{ifluatex}
