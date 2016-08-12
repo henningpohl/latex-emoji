@@ -149,6 +149,7 @@
       \else%
         \textbf{not available in pdftex}%
       \fi%
+    \fi%
   }{%
     \ifxetex%
       \@emojiimg{#1}{#2}%
