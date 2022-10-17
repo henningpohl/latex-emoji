@@ -51,28 +51,30 @@ def scrape():
     soup = BeautifulSoup(requests.get(PAGE_URL).text, "html5lib")
     table = soup('table')[0]
 
-    header = table.find('tr')
+    header = table.select_one('tr > th[class=cchars]').find_parent('tr')
     keys = get_header_names(header)
 
     with open('emoji.sty', 'wb') as out:
         out_codes = []
-        for row in header.find_next_siblings('tr'):
-            fields = {k:c for k, c in zip(keys, row.find_all('td')) }
-            if 'code' not in fields:
+        for row in table.find_all('tr'):          
+            fields = {k:c for k, c in zip(keys, row.find_all('td')) }          
+            if len(fields) != len(keys):
                 continue
 
             codes = fields['code'].text.replace('U+', '').split(' ')
             filename = "-".join(codes) + ".png"
 
-            save_image('ios', fields['apple'], filename)
-            save_image('android', fields['goog.'], filename)
-            save_image('twitter', fields['twtr.'], filename)
-            save_image('windows', fields['wind.'], filename)
-            save_image('one', fields['one'], filename)
-            save_image('bw', fields['chart'], filename)
+            save_image('ios', fields['appl'], filename)
+            save_image('android', fields['goog'], filename)
+            save_image('twitter', fields['twtr'], filename)
+            save_image('windows', fields['wind'], filename)
+            save_image('one', fields['joy'], filename)
+            save_image('facebook', fields['fb'], filename)
 
             if len(codes) == 1:
                 out_codes.append("".join(codes))
+
+        print(len(out_codes))
 
         out.write(template.render(emojis = out_codes))
 

@@ -35,7 +35,7 @@ You can include any available emoji with the \verb|\emoji| command. For example,
 \item[{\emoji[android]{1F514}} =] \verb|\emoji[android]{1F514}|
 \item[{\emoji[ios]{1F514}} =] \verb|\emoji[ios]{1F514}|
 \item[{\emoji[windows]{1F514}} =] \verb|\emoji[windows]{1F514}|
-\item[{\emoji[bw]{1F514}} =] \verb|\emoji[bw]{1F514}|
+\item[{\emoji[facebook]{1F514}} =] \verb|\emoji[facebook]{1F514}|
 \item[{\emoji[twitter]{1F514}} =] \verb|\emoji[twitter]{1F514}|
 \end{description}
 To select multi-char emoji, pass both codes joined by a dash to the command. For example, \verb|\emoji{1F1E8-1F1F3}| gives \emoji{1F1E8-1F1F3}.
@@ -43,7 +43,7 @@ This also works for longer combinations, such as \emoji{1F469-200D-1F469-200D-1F
 
 For single character emoji, you can also type that character directly (encode your document in UTF-8) and the emoji will be displayed instead. For example, the line ``\dogline'' does not contain the \verb|emoji| command. Note that this is disabled when using XeTeX. 
 
-During import of the package, you can pick the default emoji set by passing an optional argument as for the \verb|emoji| command. If you want to switch emoji sets for more than one emoji, you can use the \verb|android-emojis|, \verb|ios-emojis|, \verb|bw-emojis|, \verb|windows-emojis|, \verb|twitter-emojis| environments to temporarily change the default. For example, all following emojis are set in twitter style:
+During import of the package, you can pick the default emoji set by passing an optional argument as for the \verb|emoji| command. If you want to switch emoji sets for more than one emoji, you can use the \verb|android-emojis|, \verb|ios-emojis|, \verb|facebook-emojis|, \verb|windows-emojis|, \verb|twitter-emojis| environments to temporarily change the default. For example, all following emojis are set in twitter style:
 \begin{twitter-emojis}
 \dogline
 \end{twitter-emojis}

@@ -26,8 +26,8 @@
 \DeclareVoidOption{windows}{
     \renewcommand{\@emojifolder}{windows}
 }
-\DeclareVoidOption{bw}{
-    \renewcommand{\@emojifolder}{bw}
+\DeclareVoidOption{facebook}{
+    \renewcommand{\@emojifolder}{facebook}
 }
 \DeclareVoidOption{text}{
     \renewcommand{\@emojifolder}{text}
@@ -64,9 +64,9 @@
   \renewcommand{\@emojifolder}{\@oldemojifolder}%
 }
 
-\newenvironment{bw-emojis}{%
+\newenvironment{facebook-emojis}{%
   \let\@oldemojifolder\@emojifolder%
-  \renewcommand{\@emojifolder}{bw}%
+  \renewcommand{\@emojifolder}{facebook}%
 }{%
   \renewcommand{\@emojifolder}{\@oldemojifolder}%
 }
@@ -95,14 +95,13 @@
 }
 
 \newcommand{\@emojiimgtext}[2]{%
-   % This is an ugly hack and fails for emoji with more than five hyphens
-   % Should be list processing, but that failed somehow
+   %% This is an ugly hack and fails for emoji with more than five hyphens
+   %% Should be list processing, but that failed somehow
   \StrCut{#2}{-}{\a}{\b}%
   \StrCut{\b}{-}{\b}{\c}%
   \StrCut{\c}{-}{\c}{\d}%
   \StrCut{\d}{-}{\d}{\e}%
   \StrCut{\e}{-}{\e}{\f}%
-  %
   \ifx\b\empty%
     \BeginAccSupp{method=pdfstringdef,ActualText=\unichar{"\a},unicode,space}%
       \raisebox{-0.1em}{\includegraphics[height=0.9em]{#1/#2.png}}%
